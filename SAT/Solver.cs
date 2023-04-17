@@ -88,20 +88,12 @@ public class Solver
         var isTrueBranch = DPLL(cnf.InsertValueToLiteral(randomLiteral, true), (randomLiteral, true));
 
         var isFalseBranch = false;
-        if (cnf.HasEmptyClause)
-            return false;
-        if (cnf.IsEmpty)
-            return true;
         if (!isTrueBranch)
         {
             isFalseBranch = DPLL(cnf.InsertValueToLiteral(randomLiteral, false), (randomLiteral, false));
 
             Storage.Remove((randomLiteral, true));
         }
-        if (cnf.HasEmptyClause)
-            return false;
-        if (cnf.IsEmpty)
-            return true;
 
         if (!isFalseBranch)
             Storage.Remove((randomLiteral, false));
