@@ -7,4 +7,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Remove="Directory.Build.props" />
+      <AdditionalFiles Include="Directory.Build.props" />
+    </ItemGroup>
+
 </Project>

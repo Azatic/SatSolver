@@ -2,8 +2,8 @@ namespace SAT;
 
 public class Solver
 {
-    private static readonly Dictionary<(int, bool), List<(int, bool)>> Storage = new();
-    private static readonly (int, bool) DummyLiteral = new(0 ,true);
+    private static Dictionary<(int, bool), List<(int, bool)>> Storage = new();
+    private static (int, bool) DummyLiteral = new(0, true);
 
     public static List<(int, bool)>? SolveSat(Cnf cnf)
     {
@@ -13,13 +13,13 @@ public class Solver
 
         model.AddRange(Storage[DummyLiteral]);
         Storage.Remove(DummyLiteral);
-        
+
         foreach (var pair in Storage)
         {
             model.Add(pair.Key);
             model.AddRange(pair.Value);
         }
-        
+
         if (model.Count != cnf.CountVars)
             model = InitModel(model, cnf.CountVars);
 
@@ -46,7 +46,7 @@ public class Solver
             if (arr[i].Item1 != 0)
                 continue;
 
-            arr[i] = ( i + 1, true);
+            arr[i] = (i + 1, true);
         }
 
         return arr.ToList();
@@ -61,28 +61,31 @@ public class Solver
             var notAssigned = unitClause.NotAssigned;
             cnf = cnf.PropagateUnit(notAssigned);
 
-            Storage[selectedLiteral].Add((notAssigned, notAssigned>0));
+            Storage[selectedLiteral].Add((notAssigned, notAssigned > 0));
         }
 
-        int PURELITERAL;
+
         while (true)
         {
+            int PURELITERAL;
             PURELITERAL = cnf.PureLiteral;
             if (PURELITERAL == 0)
             {
                 break;
             }
+
             cnf = cnf.EliminatePureLiteral(PURELITERAL);
 
-            Storage[selectedLiteral].Add((PURELITERAL, PURELITERAL>0));
+            Storage[selectedLiteral].Add((PURELITERAL, PURELITERAL > 0));
             if (cnf.HasEmptyClause)
                 return false;
         }
+
         if (cnf.HasEmptyClause)
             return false;
         if (cnf.IsEmpty)
             return true;
-        
+
         var randomLiteral = cnf.GetLiteral();
 
         var isTrueBranch = DPLL(cnf.InsertValueToLiteral(randomLiteral, true), (randomLiteral, true));

@@ -4,31 +4,31 @@ namespace SAT;
 
 public class Clause
 {
-    public List<int> Literals { get; }
+    public List<int> Variable { get; }
 
     public Clause(List<int> literals)
     {
-        Literals = new List<int>(literals);
+        Variable = new List<int>(literals);
     }
 
-    public bool IsEmpty => Literals.Count == 0;
+    public bool IsEmpty => Variable.Count == 0;
 
-    public bool IsUnitClause => Literals.Count == 1;
+    public bool IsUnitClause => Variable.Count == 1;
 
-    public int NotAssigned => Literals.Single();
+    public int NotAssigned => Variable.Single();
 
-    public object Clone() => new Clause(Literals);
+    public object Clone() => new Clause(Variable);
 
     public override string ToString()
     {
         string builder = "";
-        builder+='(';
+        builder += '(';
 
         const string separator = " \\/ ";
-        foreach (var literal in Literals)
+        foreach (var literal in Variable)
         {
-            builder+=literal;
-            builder+=separator;
+            builder += literal;
+            builder += separator;
         }
 
         builder = builder.Substring(0, builder.Length - separator.Length);

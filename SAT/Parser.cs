@@ -4,7 +4,7 @@ namespace SAT;
 
 public class Parser
 {
-     private const char CommentChar = 'c';
+    private const char CommentChar = 'c';
     private const string PCnf = "p cnf";
     private const string EndChar = "0";
     private const char DefaultSeparator = ' ';
@@ -64,7 +64,7 @@ public class Parser
             {
                 if (literal == EndChar)
                     break;
-                
+
                 if (Convert.ToInt16(literal) > countVars)
                     throw new ArgumentException("Too large variable index");
 

@@ -5,33 +5,34 @@ public class Cnf
     public int CountVars { get; }
 
     private List<Clause> _clauses;
-    private List<int> _literals;
+    private List<int> _variable;
 
     public Cnf(List<Clause> clauses)
     {
         _clauses = new List<Clause>(clauses);
-        _literals = new List<int>();
+        _variable = new List<int>();
         foreach (var clause in clauses)
         {
-            foreach (var literal in clause.Literals)
+            foreach (var literal in clause.Variable)
             {
                 if (literal < 0)
                 {
-                    if (!_literals.Contains(-literal))
+                    if (!_variable.Contains(-literal))
                     {
-                        _literals.Add(-literal);
+                        _variable.Add(-literal);
                     }
                 }
                 else
                 {
-                    if (!_literals.Contains(literal))
+                    if (!_variable.Contains(literal))
                     {
-                        _literals.Add(literal);
+                        _variable.Add(literal);
                     }
                 }
             }
         }
-        CountVars = _literals.Count;
+
+        CountVars = _variable.Count;
     }
 
     public Cnf(List<Clause> clauses, int countVars) : this(clauses)
@@ -46,67 +47,72 @@ public class Cnf
     public bool IsEmpty => _clauses.Count == 0;
 
     public bool HasEmptyClause => _clauses.Any(clause => clause.IsEmpty);
-    
-    public Cnf PropagateUnit(int notAssigned) 
+
+    public Cnf PropagateUnit(int notAssigned)
     {
         var simplifiedClauses = new List<Clause>(_clauses);
-    
+
         foreach (var clause in _clauses)
         {
-            if (clause.Literals.Contains(notAssigned))
+            if (clause.Variable.Contains(notAssigned))
             {
                 simplifiedClauses.Remove(clause);
             }
-            else if (clause.Literals.Contains(-notAssigned))
+            else if (clause.Variable.Contains(-notAssigned))
             {
-                simplifiedClauses.Find(item => item == clause).Literals.Remove(-notAssigned);
+                simplifiedClauses.Find(item => item == clause).Variable.Remove(-notAssigned);
             }
         }
 
         return new(simplifiedClauses);
     }
 
-    public int GetPureLiteral()//литерал с одной полярностью
+    public int GetPureLiteral() //литерал с одной полярностью
     {
-        foreach (var uniqueLiteral in _literals)
+        foreach (var uniqueLiteral in _variable)
         {
             var isPure = true;
             foreach (var clause in _clauses)
             {
-                if (clause.Literals.Contains(-uniqueLiteral))
-                    {
-                        isPure = false;
-                        break;
-                    }
-            }
-            if (isPure)
-            {
-                return uniqueLiteral;
-            }
-            isPure = true;
-            foreach (var clause in _clauses)
-            {
-                if (clause.Literals.Contains(uniqueLiteral))
+                if (clause.Variable.Contains(-uniqueLiteral))
                 {
                     isPure = false;
                     break;
                 }
             }
+
+            if (isPure)
+            {
+                return uniqueLiteral;
+            }
+
+            isPure = true;
+            foreach (var clause in _clauses)
+            {
+                if (clause.Variable.Contains(uniqueLiteral))
+                {
+                    isPure = false;
+                    break;
+                }
+            }
+
             if (isPure)
             {
                 return -uniqueLiteral;
             }
         }
+
         return 0;
     }
 
-    public Cnf EliminatePureLiteral(int pureLiteral)//удаление предложений, в которые входит литерал с одной полярностью
+    public Cnf
+        EliminatePureLiteral(int pureLiteral) //удаление предложений, в которые входит литерал с одной полярностью
     {
-        _clauses.RemoveAll(clause => clause.Literals.Contains(pureLiteral));
+        _clauses.RemoveAll(clause => clause.Variable.Contains(pureLiteral));
         return new(_clauses);
     }
 
-    public int GetLiteral() => _literals.First();
+    public int GetLiteral() => _variable.First();
 
     public Cnf InsertValueToLiteral(int literal, bool value)
     {
@@ -116,20 +122,20 @@ public class Cnf
 
         foreach (var clause in clausesDeepClone)
         {
-            if (clause.Literals.Contains(literal))
+            if (clause.Variable.Contains(literal))
             {
                 if (literal > 0 && value)
                 {
                     simplifiedClauses.Remove(clause);
-                    
                 }
                 else
-                    clause.Literals.Remove(literal);
+                    clause.Variable.Remove(literal);
             }
-            if (clause.Literals.Contains(-literal))
+
+            if (clause.Variable.Contains(-literal))
             {
                 if (literal > 0 && value)
-                    clause.Literals.Remove(-literal);
+                    clause.Variable.Remove(-literal);
                 else
                 {
                     simplifiedClauses.Remove(clause);
@@ -147,11 +153,11 @@ public class Cnf
         const string separator = " /\\ ";
         foreach (var clause in _clauses)
         {
-            builder+=clause;
-            builder+=separator;
+            builder += clause;
+            builder += separator;
         }
 
-       
+
         builder = builder.Substring(0, builder.Length - separator.Length);
         return builder;
     }
