@@ -16,22 +16,16 @@ public class CnfTest
     [Test]
     public void Test1()
     {
-        Cnf _testcnf1 = new Cnf(new List<Clause>(){_clause1,_clause2});
-        Assert.That(1,Is.EqualTo(_testcnf1.PureLiteral));
+        Cnf _testcnf1 = new Cnf(new List<Clause>() { _clause1, _clause2 });
+        Assert.That(1, Is.EqualTo(_testcnf1.PureLiteral));
     }
+
     [Test]
     public void Test2()
     {
         Cnf _testcnf1 = new Cnf(new List<Clause>(){_clause1,_clause2});
-        Assert.That(1,Is.EqualTo(_testcnf1.PureLiteral));
-    }
-    
-    [Test]
-    public void Test3()
-    {
-        Cnf _testcnf1 = new Cnf(new List<Clause>(){_clause1,_clause2});
         Cnf _testcnf2 = new Cnf(new List<Clause>() { new Clause(new List<int>() { 2, 3 }) });
-        Assert.That(_testcnf2.ToString(),Is.EqualTo(_testcnf1.InsertValueToLiteral(1,true).ToString()));
+        Assert.That(_testcnf2.ToString(),Is.EqualTo(_testcnf1.PropagateValueToLiteral(1,true).ToString()));
     }
 
 }

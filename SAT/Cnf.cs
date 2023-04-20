@@ -117,7 +117,7 @@ public class Cnf
 
     public int GetLiteral() => _variable.First();
 
-    public Cnf InsertValueToLiteral(int literal, bool value)
+    public Cnf PropagateValueToLiteral(int literal, bool value)
     {
         var clausesDeepClone = _clauses.Select(clause => (Clause)clause.Clone()).ToList();
 

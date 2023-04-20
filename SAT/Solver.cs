@@ -91,22 +91,18 @@ public class Solver
 
         var randomLiteral = cnf.GetLiteral();
 
-        var isTrueBranch = DPLL(cnf.InsertValueToLiteral(randomLiteral, true), (randomLiteral, true));
+        var isTrueBranch = DPLL(cnf.PropagateValueToLiteral(randomLiteral, true), (randomLiteral, true));
 
         var isFalseBranch = false;
         if (!isTrueBranch)
         {
-            isFalseBranch = DPLL(cnf.InsertValueToLiteral(randomLiteral, false), (randomLiteral, false));
+            isFalseBranch = DPLL(cnf.PropagateValueToLiteral(randomLiteral, false), (randomLiteral, false));
 
             Storage.Remove((randomLiteral, true));
         }
 
         if (!isFalseBranch)
             Storage.Remove((randomLiteral, false));
-        if (cnf.HasEmptyClause)
-            return false;
-        if (cnf.IsEmpty)
-            return true;
 
         return isTrueBranch || isFalseBranch;
     }
